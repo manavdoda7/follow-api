@@ -57,7 +57,7 @@ router.post('/register', async(req, res)=>{
             return
         }
         try {
-            await db.promise().query(`insert into user values("${username}", "${email}", "${fName}", "${lName}", "${password}")`)
+            await db.promise().query(`insert into user values("${username}", "${email}", "${fName}", "${lName}", "${hashedPassword}")`)
         } catch(err) {
             console.log('Error in saving to DB.', err);
             res.status(408).json({success:false, error:'Couldn\'t register user. Please try again after sometime'})
@@ -106,7 +106,7 @@ router.post('/login', async(req, res)=>{
 router.patch('/:username', checkAuth, async(req, res)=>{
     console.log('PATCH /api/users/username request.');
     const {fName, lName, email, password} = req.body
-    if(req.params.username!=req.userData.username) return res.status(403).json('Please login using correct credentials.')
+    if(req.params.username!=req.userData.username) return res.status(403).json({success:true, error:'Please login using correct credentials.'})
     if(email!=undefined && email!='') {
         let checkDupli
         try{
@@ -161,7 +161,7 @@ router.patch('/:username', checkAuth, async(req, res)=>{
 
 router.delete('/:username', checkAuth, async(req, res)=>{
     console.log('DELETE /api/users/username request.');
-    if(req.params.username!=req.userData.username) return res.status(403).json('Please login using correct credentials.')
+    if(req.params.username!=req.userData.username) return res.status(403).json({success:true, error:'Please login using correct credentials.'})
     try {
         await db.promise().query(`delete from user where username = "${req.params.username}";`)
     } catch(err) {

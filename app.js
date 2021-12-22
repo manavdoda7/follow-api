@@ -18,7 +18,7 @@ app.use('/api/followers', require('./routes/followerRoutes'))
 app.use('/api/suggestions', require('./routes/suggestionsRoute'))
 
 app.use((req, res)=>{
-    res.status(404).json({message: 'Route not found'})
+    res.status(404).json({success:true, message: 'Route not found'})
 })
 
 // For starting the server

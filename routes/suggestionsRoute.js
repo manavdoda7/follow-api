@@ -66,7 +66,7 @@ router.get('/', checkAuth, async(req, res)=>{
         }
         if(data!=undefined) suggArr.push(data)
     }
-    res.status(200).json(suggArr)
+    res.status(200).json({success:true, suggestions:suggArr})
 })
 
 module.exports = router
