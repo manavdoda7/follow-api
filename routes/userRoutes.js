@@ -2,6 +2,8 @@ const express = require('express')
 const db = require('../middlewares/dbconnection')
 const router = express.Router()
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 router.get('/', async(req, res)=>{
     console.log('GET /api/users request');
@@ -23,7 +25,7 @@ router.get('/', async(req, res)=>{
 })
 
 router.post('/register', async(req, res)=>{
-    console.log('POST /api/users/request');
+    console.log('POST /api/users/register request');
     const {username, email, fName, lName, password} = req.body
     if( username!=undefined && email!=undefined && fName!=undefined && lName!=undefined && password!=undefined) {
         let check
@@ -61,7 +63,43 @@ router.post('/register', async(req, res)=>{
             return
         }
         return res.status(201).json({success:true, message:'User created'})
-    } else return res.status(406).json({success:'false', error:'One or more of the required items missing.'})
+    } else return res.status(406).json({success:'false', error:'Registration failed. One or more of the required items missing.'})
+})
+
+router.post('/login', async(req, res)=>{
+    console.log('POST /api/users/login request');
+    const{username, password} = req.body
+    if(username===undefined || password===undefined) return res.status(406).json({success:false, error:'Authenication failed. Please provide both username and password while logging in.'})
+    let user
+    try {
+        user = await db.promise().query(`select * from user where username = "${username}"`)
+        user = user[0]
+    } catch(err) {
+        console.log('User fetch error.', err);
+        return res.status(408).json({success:false, error:'Please try again after sometime.'})
+    }
+    if(user.length==0) return res.status(400).json({success:true, message:'Login failed'})
+    user = user[0]
+    bcrypt.compare(password, user.password, (bcryptErr, result)=>{
+        if(bcryptErr) {
+            console.log('Bcrypt Error', bcryptErr);
+            return res.status(408).json({success:false, error:'Please try again after sometime.'})
+        }
+        if(result) {
+            const token = jwt.sign({
+                username: user.username,
+                email: user.email,
+                fName: user.fName,
+                lName: user.lName
+            }, process.env.JWT_SECRET, {
+                expiresIn: '2h'
+            })
+            console.log('Auth successfull', user, token);
+            return res.status(202).json({success:true, message:'Authenication successfull.', token:token})
+        }
+        console.log('Password mismatch');
+        return res.status(400).json({success:true, message:'Login failed'})
+    })
 })
 
 module.exports = router
