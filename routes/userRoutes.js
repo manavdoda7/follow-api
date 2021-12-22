@@ -4,6 +4,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
+const checkAuth = require('../middlewares/checkAuth')
 
 router.get('/', async(req, res)=>{
     console.log('GET /api/users request');
@@ -101,5 +102,62 @@ router.post('/login', async(req, res)=>{
         return res.status(400).json({success:true, message:'Login failed'})
     })
 })
+
+router.patch('/:username', checkAuth, async(req, res)=>{
+    console.log('PATCH /api/users/username request.');
+    const {fName, lName, email, password} = req.body
+    if(req.params.username!=req.userData.username) return res.status(403).json('Please login using correct credentials.')
+    if(email!=undefined && email!='') {
+        let checkDupli
+        try{
+            checkDupli = await db.promise().query(`select email from user where email = "${email}"`)
+            checkDupli = checkDupli[0]
+        } catch(err) {
+            console.log('Error in fetching email from DB', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+        if(checkDupli.length) return res.status(403).json({success:true, error:"The email you are trying to set already exists in DB. Please try again using diffrent email."})
+        try {
+            await db.promise().query(`update user set email="${email}" where username ="${req.params.username}";`)
+        } catch(err) {
+            console.log('Error in updating email in DB', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+    }
+    if(fName!=undefined && fName!='') {
+        try{
+            await db.promise().query(`update user set fname = "${fName}" where username="${req.params.username}";`)
+        } catch(err) {
+            console.log('Error in updating fName in db', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+    }
+    if(lName!=undefined && lName!='') {
+        try {
+            await db.promise().query(`update user set lName = "${lName}" where username="${req.params.username}";`)
+        } catch(err) {
+            console.log('Error in updating lName in DB', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+    }
+    if(password!=undefined && password!='') {
+        let hashedPassword
+        try {
+            hashedPassword = await bcrypt.hash(password, 11)
+        } catch(err) {
+            console.log('bcrypt error', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+        try{
+            await db.promise().query(`update user set password = "${hashedPassword}" where username = "${req.params.username}";`)
+        } catch(err) {
+            console.log('Error in updating password in DB', err);
+            return res.status(408).json({success:false, error: 'Error while updating. Please try again after sometime.'})
+        }
+    }
+    res.status(201).json({success:true, message:"All valid entries updated."})
+})
+
+
 
 module.exports = router
