@@ -2,7 +2,13 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 const checkAuth = (req, res, next) => {
-    const token = req.headers.authorization.split(" ")[1]
+    let token
+    try {
+        token = req.headers.authorization.split(" ")[1]
+    } catch(err) {
+        console.log('Token fetch error', err);
+        res.status(404).json({success:false, error:"token not found"})
+    }
     // console.log(token);
     try {
         const decode = jwt.verify(token, process.env.JWT_SECRET)

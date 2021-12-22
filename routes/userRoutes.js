@@ -159,5 +159,15 @@ router.patch('/:username', checkAuth, async(req, res)=>{
 })
 
 
-
+router.delete('/:username', checkAuth, async(req, res)=>{
+    console.log('DELETE /api/users/username request.');
+    if(req.params.username!=req.userData.username) return res.status(403).json('Please login using correct credentials.')
+    try {
+        await db.promise().query(`delete from user where username = "${req.params.username}";`)
+    } catch(err) {
+        console.log('Error in deleting user from db.', err);
+        return res.status(408).json({success:false, error:'Error in deleting user. Please try again after sometime.'})
+    }
+    return res.status(202).json({success:true, message: 'User deleted successfully.'})
+})
 module.exports = router
