@@ -12,9 +12,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/users', require('./routes/userRoutes.js'))
-app.use('/api/following', require('./routes/followingRoutes.js'))
-app.use('/api/followers', require('./routes/followerRoutes.js'))
+app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/following', require('./routes/followingRoutes'))
+app.use('/api/followers', require('./routes/followerRoutes'))
+app.use('/api/suggestions', require('./routes/suggestionsRoute'))
 
 app.use((req, res)=>{
     res.status(404).json({message: 'Route not found'})
