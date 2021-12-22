@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/users', require('./routes/userRoutes.js'))
 app.use('/api/following', require('./routes/followingRoutes.js'))
+app.use('/api/followers', require('./routes/followerRoutes.js'))
 
 app.use((req, res)=>{
     res.status(404).json({message: 'Route not found'})
