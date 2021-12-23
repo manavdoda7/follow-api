@@ -60,13 +60,13 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
     "username": "testusername",
     "password": "1234"
 }```
-  * A token is returned when login is successfull which is valid for 1 hour.
+  * A token is returned when login is successful which is valid for 1 hour.
   * Response example on status 200 (OK): <br> ```{
     "success": true,
-    "message": "Authenication successfull.",
+    "message": "Authentication successfull.",
     "token": "unique_token"
 }```
-  * Doesn't allow authenication if either username or password is incorrect.
+  * Doesn't allow authentication if either username or password is incorrect.
   * Response for above request: <br>'''{
     "success": true,
     "message": "Login failed"
@@ -136,7 +136,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 }```
   * Response example on status 201 (Created):<br>```{
     "success": true,
-    "message": "Task successfull."
+    "message": "Task successful."
 }```
   * Doesn't allow to follow yourself, follow a user which doesn't exist or follow a user whom you already follow. 
   * Response for above request:<br>```{
@@ -152,7 +152,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 
 #### /api/following/username (DELETE Request)
   * Endpoint for removing a person from following.
-  * Requirements: User shold be authenicated.
+  * Requirements: User should be authenicated.
   * Response example on status 200(OK): <br> ```{
     "success": true,
     "message": "Relationship deleted."
@@ -188,7 +188,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 
 #### /api/followers/username (DELETE Request)
   * Endpoint for removing a person from followers.
-  * Requirements: User shold be authenicated.
+  * Requirements: User should be authenicated.
   * Response example on status 200(OK): <br> ```{
     "success": true,
     "message": "Relationship deleted."
@@ -223,7 +223,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
     ]
 }```
    
-### NOTE: Every end point has request data validator and throws an appropirate error for bad requests
+### NOTE: Every end point has request data validator and throws an appropriate error for bad requests
 
 
 ## <a name="localSetup"></a>Run project locally 
@@ -257,12 +257,12 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 ## <a name="algorithm"></a>Algorithm for finding suggestions
 
  * The algorithm firstly fetches the list of all the followings and followers from the database.
- * Then it creates a map and stores the list of all the usernames of following in key of map and assign them a value 5 initially.
+ * Then it creates a map and stores the list of all the usernames of following in key of map and assigns them a value 5 initially.
  * After that it fetches the list of all the followings of followings and for each user in the list:
  <br>i) If the user exists in map: Increments its value by 2.
- <br>ii) If the user doesn't exist in map: makes a key of that value and assign it value 2.
- * For each user in following it it fetches its followers and for each follower:
- <br>i) If the follower exists in map it increments it's count by 1.
+ <br>ii) If the user doesn't exist in map: makes a key of that value and assigns it value 2.
+ * For each user in following it fetches its followers and for each follower:
+ <br>i) If the follower exists in map it increments its count by 1.
  <br>ii) Otherwise makes an entry with follower's username as key and value being 1.
  * After that we use a for loop to traverse the map and remove the entries whom the user is already following.
  * Then we remove the entry of user himself(if there).
