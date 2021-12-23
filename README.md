@@ -1,14 +1,18 @@
 # follow-api
-An API for creating, reading, updating and deleting users. <br>
-Users can follow/unfollow each other <br>
-Suggestions are shown on the basis of mutuals. Suggestions to follow other users are shown according to the given Algorithm
-[Deployed Link](https://follow--api.herokuapp.com/)
 
 ## Index
+  * [Introduction](#introduction)
   * [Endpoints](#endpoints)
   * [Run Project Locally](#localSetup)
   * [Dependencies](#depend)
   * [How to use deployed link](#deployed)
+  * [Algorithm](#algorithm)
+
+## <a name="introduction"></a>Introduction
+An API for creating, reading, updating and deleting users. <br>
+Users can follow/unfollow each other. <br>
+Suggestions are shown on the basis of mutuals. Suggestions to follow other users are shown according to the given [Algorithm](#algorithm).<br><br>
+[Deployed Link](https://follow--api.herokuapp.com/)
 
 ## <a name="endpoints"></a>Endpoints
 ### User Routes
@@ -34,7 +38,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
     ]
 }```
 #### /api/users/register (POST Request)
-  * A user registration endpoint 
+  * A user registration endpoint.
   * Request body example: <br>  ``` {"username": "testusername",
 "email": "email@email.com",
 "fName":"Test",
@@ -44,14 +48,14 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
     "success": true,
     "message": "User created"
 } ```
-  * Does not allow users with same username or email ID ( i.e. no duplicate users )
+  * Does not allow users with same username or email ID ( i.e. no duplicate users ).
   * Response for above request ( TestUser already exists ) : <br>``` {
     "success": true,
     "error": "Email already exists."
 }```
 
 #### /api/users/login (POST Request)
-  * Endpoint for User Login
+  * Endpoint for User Login.
   * Request body example: <br>```{
     "username": "testusername",
     "password": "1234"
@@ -69,7 +73,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 }'''
 
 #### /api/users/username (PATCH Request)
-  * Endpoint for modification in user data
+  * Endpoint for modification in user data.
   * Requirements: Unique token acquired when logged in and username passed in request params should be same as username of user in token.
   * Request body example:<br> ```{
     "email": "email2@email.com",
@@ -94,7 +98,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
     "success": true,
     "message": "User deleted successfully."
 }```
-  * Doesn't allow if user is trying to delete without valid token
+  * Doesn't allow if user is trying to delete without valid token.
   * Response for above request: <br>```{
     "success": true,
     "error": "You're not authorized."
@@ -249,3 +253,17 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
 ## <a name="deployed"></a>To use deployed link for making requests: 
  * Use the base url and append the above given endpoints
  * Example: https://follow--api.herokuapp.com/api/users
+
+## <a name="algorithm"></a>Algorithm for finding suggestions
+
+ * The algorithm firstly fetches the list of all the followings and followers from the database.
+ * Then it creates a map and stores the list of all the usernames of following in key of map and assign them a value 5 initially.
+ * After that it fetches the list of all the followings of followings and for each user in the list:
+ <br>i) If the user exists in map: Increments its value by 2.
+ <br>ii) If the user doesn't exist in map: makes a key of that value and assign it value 2.
+ * For each user in following it it fetches its followers and for each follower:
+ <br>i) If the follower exists in map it increments it's count by 1.
+ <br>ii) Otherwise makes an entry with follower's username as key and value being 1.
+ * After that we use a for loop to traverse the map and remove the entries whom the user is already following.
+ * Then we remove the entry of user himself(if there).
+ * Then we sort the list and fetch the user data of all the entries and store the result in an array.
