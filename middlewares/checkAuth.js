@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken')
+const db = require('./dbconnection')
 require('dotenv').config()
 
-const checkAuth = (req, res, next) => {
+const checkAuth = async(req, res, next) => {
     let token
     try {
         token = req.headers.authorization.split(" ")[1]
@@ -13,6 +14,9 @@ const checkAuth = (req, res, next) => {
     try {
         const decode = jwt.verify(token, process.env.JWT_SECRET)
         req.userData = decode
+        let user = await db.promise().query(`select username from user where username = "${decode.username}"`)
+        user = user[0]
+        if(user.length==0) return res.status(400).json('You\'re not authorised.')
         next()
     } catch(err) {
         console.log('JWT Token verification failed.', err);

@@ -35,7 +35,7 @@ router.post('/', checkAuth, async(req, res)=>{
     try{
         let checkDupli = await db.promise().query(`select * from follow where followed ="${followed}" and followedBy = "${followedBy}"`)
         checkDupli=checkDupli[0]
-        if(checkDupli.length) return res.json(400).status({success:false, error:'You\'re already following this user.'})
+        if(checkDupli.length) return res.status(400).json({success:false, error:'You\'re already following this user.'})
     } catch(err) {
         console.log('Error in checking for duplicates', err);
         return res.status(408).json({success:false, error:'Error in creating relationship. Please try again after sometime.'})
