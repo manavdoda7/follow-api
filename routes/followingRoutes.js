@@ -23,11 +23,11 @@ router.post('/', checkAuth, async(req, res)=>{
     console.log('POST /api/following request');
     const followedBy = req.userData.username
     const followed = req.body.username
-
+    if(followedBy===followed) return res.status(403).json({success: true, error: 'You can\'t follow yourself'})
     try{
         let user = await db.promise().query(`select username from user where username = "${followed}";`)
         user = user[0]
-        if(user.length===0) return res.status(404).json({success:false, error:'Username not found.'})
+        if(user.length===0) return res.status(404).json({success:true, error:'Username not found.'})
     } catch(err) {
         console.log('Error in fetchiing username exists', err);
         return res.status(408).json({success:false, error:'Error in creating relationship. Please try again after sometime.'})
@@ -35,7 +35,7 @@ router.post('/', checkAuth, async(req, res)=>{
     try{
         let checkDupli = await db.promise().query(`select * from follow where followed ="${followed}" and followedBy = "${followedBy}"`)
         checkDupli=checkDupli[0]
-        if(checkDupli.length) return res.status(400).json({success:false, error:'You\'re already following this user.'})
+        if(checkDupli.length) return res.status(400).json({success:true, error:'You\'re already following this user.'})
     } catch(err) {
         console.log('Error in checking for duplicates', err);
         return res.status(408).json({success:false, error:'Error in creating relationship. Please try again after sometime.'})

@@ -27,7 +27,7 @@ router.delete('/:username', checkAuth, async(req, res)=>{
     try{
         let checkExis = await db.promise().query(`select * from follow where followed ="${followed}" and followedBy = "${followedBy}"`)
         checkExis=checkExis[0]
-        if(checkExis.length===0) return res.status(400).json({success:false, error:'You\'re not following this user.'})
+        if(checkExis.length===0) return res.status(400).json({success:false, error:'This user is not following you.'})
     } catch(err) {
         console.log('Error in checking for relationship', err);
         return res.status(408).json({success:false, error:'Error in deleting relationship. Please try again after sometime.'})

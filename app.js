@@ -16,6 +16,9 @@ app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/following', require('./routes/followingRoutes'))
 app.use('/api/followers', require('./routes/followerRoutes'))
 app.use('/api/suggestions', require('./routes/suggestionsRoute'))
+app.use('/', (req,res)=>{
+    res.status(200).json({success:true, message:'API is now connected'})
+})
 
 app.use((req, res)=>{
     res.status(404).json({success:true, message: 'Route not found'})
