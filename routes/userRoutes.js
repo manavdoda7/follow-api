@@ -95,8 +95,8 @@ router.post('/login', async(req, res)=>{
             }, process.env.JWT_SECRET, {
                 expiresIn: '2h'
             })
-            console.log('Auth successfull', user, token);
-            return res.status(202).json({success:true, message:'Authenication successfull.', token:token})
+            console.log('Auth successful', user, token);
+            return res.status(202).json({success:true, message:'Authenication successful.', token:token})
         }
         console.log('Password mismatch');
         return res.status(400).json({success:true, message:'Login failed'})

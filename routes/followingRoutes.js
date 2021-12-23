@@ -47,7 +47,7 @@ router.post('/', checkAuth, async(req, res)=>{
         console.log('Error in creating relationship.', err);
         res.status(408).json({success:false, error:'Error in creating relationship. Please try again after sometime.'})
     }
-    return res.status(201).json({success:true, message:'Task successfull.'})
+    return res.status(201).json({success:true, message:'Task successful.'})
 })
 
 router.delete('/:username', checkAuth, async(req, res)=>{
