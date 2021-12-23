@@ -228,7 +228,7 @@ Suggestions are shown on the basis of mutuals. Suggestions to follow other users
  * Run : ``` npm install ```
  * Create a new ```.env``` file with the following data: <br>
 
-```PORT=3000```
+```PORT=3000```<br>
 ```DB=<YOUR_DB_HOST>```(localhost for local database)<br>
 ```DB_USER=<NAME_OF_DB_USER>```(root for local user generally)<br>
 ```DB_PASSWORD=<YOUR_DB_PASSWORD>```(NULL if you haven't configured for local user) <br>
